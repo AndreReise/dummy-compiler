@@ -54,6 +54,11 @@ namespace Tokenizer.Console
         public string VariableName { get; set; }
     }
 
+    public class ConstantSyntaxNode : SyntaxNode
+    {
+        public string Value { get; set; }
+    }
+
     public class CompoundSyntaxNode : SyntaxNode
     {
         public SyntaxNode[] InnerNodes { get; set; }

@@ -263,6 +263,27 @@ namespace Tokenizer.Console
             SyntaxNode previousNode = null;
             SyntaxToken previousToken = null;
 
+            if (tokenStack.Count == 1)
+            {
+                var token = tokenStack.Pop();
+
+                return ((token.TokenType == SyntaxTokenType.Number) || (token.TokenType == SyntaxTokenType.String))
+                    ? new ConstantSyntaxNode() {Value = token.Value}
+                    : new VariableSyntaxNode() {VariableName = token.Value};
+            }
+
+            if (tokenStack.Count == 2)
+            {
+                var a = tokenStack.Pop();
+                var b = tokenStack.Pop();
+
+                return new UnaryOperatorSyntaxNode()
+                {
+                    Type = (int) a.TokenType,
+                    Operand = b,
+                };
+            }
+
             while (tokenStack.Count != 0)
             {
                 var token = tokenStack.Pop();
