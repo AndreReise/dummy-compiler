@@ -1,0 +1,49 @@
+COMPILER LexicalAnalyzer
+CHARACTERS
+    digit = '0'..'9'.
+    lowerLetter = 'a'..'z'. 
+    upperLetter = 'A'..'Z'. 
+
+    // Comparison
+    equal = '='.
+    not = '!'.
+    more = '>'.
+    less = '<'.
+
+    // Operations
+    add = '+'.
+    sub = '-'.
+    mul = '*'.
+    div = '/'.
+    mod = '%'.
+
+    semicol = ';'.
+
+TOKENS
+    operation = add | sub | mul | div | mod.
+    comparison = not equal | equal equal | more | less | more equal | less equal.
+
+    VarName = (lowerLetter | upperLetter) { lowerLetter | upperLetter | digit }.
+    IntNum = [sub] digit {digit} [['e'|'E'] ['+'|'-'] digit {digit}].
+    FloatNum = [sub] digit {digit} "." {digit} [['e'|'E'] ['+'|'-'] digit {digit}].
+
+    Semicol = semicol.
+    Equal = equal.
+IGNORE '\r' + '\n'
+PRODUCTIONS
+    LexicalAnalyzer = IfElseStatement.
+    IfElseStatement = "if" "(" Condition ")" "{" Body "}" "else" "{" Body "}".
+    Condition = IntCondition | FloatCondition.
+
+    IntCondition = IntNum {operation IntNum} comparison IntNum {operation IntNum}.
+    FloatCondition = FloatNum {operation FloatNum} comparison FloatNum {operation FloatNum}.
+
+    Body = {Expression | IfElseStatement}.
+    Expression = (IntExpression | FloatExpression) Semicol.
+
+    FloatExpression = "float" VarName Equal FloatExprVar {operation FloatExprVar}.
+    IntExpression = "int" VarName Equal IntExprVar {operation IntExprVar}.
+    IntExprVar = IntNum | VarName.
+    FloatExprVar = FloatNum | VarName.
+
+END LexicalAnalyzer.
