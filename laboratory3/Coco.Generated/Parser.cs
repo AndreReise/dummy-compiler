@@ -12,7 +12,7 @@ public class Parser {
 	public const int _FloatNum = 5;
 	public const int _Semicol = 6;
 	public const int _Equal = 7;
-	public const int maxT = 16;
+	public const int maxT = 17;
 
 	const bool _T = true;
 	const bool _x = false;
@@ -85,21 +85,60 @@ public class Parser {
 
 	
 	void LexicalAnalyzer() {
-		IfElseStatement();
+		if (la.kind == 10) {
+			ForStatement();
+		} else if (la.kind == 15) {
+			IfElseStatement();
+		} else SynErr(18);
+	}
+
+	void ForStatement() {
+		Expect(10);
+		Expect(11);
+		Declaration();
+		Expect(6);
+		Condition();
+		Expect(6);
+		ForExpression();
+		Expect(12);
+		Expect(13);
+		Body();
+		Expect(14);
 	}
 
 	void IfElseStatement() {
-		Expect(8);
-		Expect(9);
-		Condition();
-		Expect(10);
+		Expect(15);
 		Expect(11);
-		Body();
+		Condition();
 		Expect(12);
 		Expect(13);
-		Expect(11);
 		Body();
-		Expect(12);
+		Expect(14);
+		Expect(16);
+		Expect(13);
+		Body();
+		Expect(14);
+	}
+
+	void TypeSpecifier() {
+		if (la.kind == 8) {
+			Get();
+		} else if (la.kind == 9) {
+			Get();
+		} else SynErr(19);
+	}
+
+	void Declaration() {
+		TypeSpecifier();
+		Expect(3);
+		Expect(7);
+		while (la.kind == 4 || la.kind == 5) {
+			if (la.kind == 4) {
+				Get();
+			} else {
+				Get();
+			}
+		}
 	}
 
 	void Condition() {
@@ -107,12 +146,26 @@ public class Parser {
 			IntCondition();
 		} else if (la.kind == 5) {
 			FloatCondition();
-		} else SynErr(17);
+		} else if (la.kind == 3) {
+			VarCondition();
+		} else SynErr(20);
+	}
+
+	void ForExpression() {
+		Expect(3);
+		Expect(1);
+		if (la.kind == 3) {
+			Get();
+		} else if (la.kind == 4) {
+			Get();
+		} else if (la.kind == 5) {
+			Get();
+		} else SynErr(21);
 	}
 
 	void Body() {
-		while (la.kind == 8 || la.kind == 14 || la.kind == 15) {
-			if (la.kind == 14 || la.kind == 15) {
+		while (la.kind == 8 || la.kind == 9 || la.kind == 15) {
+			if (la.kind == 8 || la.kind == 9) {
 				Expression();
 			} else {
 				IfElseStatement();
@@ -148,17 +201,29 @@ public class Parser {
 		}
 	}
 
+	void VarCondition() {
+		Expect(3);
+		Expect(2);
+		while (la.kind == 4 || la.kind == 5) {
+			if (la.kind == 4) {
+				Get();
+			} else {
+				Get();
+			}
+		}
+	}
+
 	void Expression() {
-		if (la.kind == 15) {
+		if (la.kind == 8) {
 			IntExpression();
-		} else if (la.kind == 14) {
+		} else if (la.kind == 9) {
 			FloatExpression();
-		} else SynErr(18);
+		} else SynErr(22);
 		Expect(6);
 	}
 
 	void IntExpression() {
-		Expect(15);
+		Expect(8);
 		Expect(3);
 		Expect(7);
 		IntExprVar();
@@ -169,7 +234,7 @@ public class Parser {
 	}
 
 	void FloatExpression() {
-		Expect(14);
+		Expect(9);
 		Expect(3);
 		Expect(7);
 		FloatExprVar();
@@ -184,7 +249,7 @@ public class Parser {
 			Get();
 		} else if (la.kind == 3) {
 			Get();
-		} else SynErr(19);
+		} else SynErr(23);
 	}
 
 	void IntExprVar() {
@@ -192,7 +257,7 @@ public class Parser {
 			Get();
 		} else if (la.kind == 3) {
 			Get();
-		} else SynErr(20);
+		} else SynErr(24);
 	}
 
 
@@ -207,7 +272,7 @@ public class Parser {
 	}
 	
 	static readonly bool[,] set = {
-		{_T,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x}
+		{_T,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x}
 
 	};
 } // end Parser
@@ -229,19 +294,23 @@ public class Errors {
 			case 5: s = "FloatNum expected"; break;
 			case 6: s = "Semicol expected"; break;
 			case 7: s = "Equal expected"; break;
-			case 8: s = "\"if\" expected"; break;
-			case 9: s = "\"(\" expected"; break;
-			case 10: s = "\")\" expected"; break;
-			case 11: s = "\"{\" expected"; break;
-			case 12: s = "\"}\" expected"; break;
-			case 13: s = "\"else\" expected"; break;
-			case 14: s = "\"float\" expected"; break;
-			case 15: s = "\"int\" expected"; break;
-			case 16: s = "??? expected"; break;
-			case 17: s = "invalid Condition"; break;
-			case 18: s = "invalid Expression"; break;
-			case 19: s = "invalid FloatExprVar"; break;
-			case 20: s = "invalid IntExprVar"; break;
+			case 8: s = "\"int\" expected"; break;
+			case 9: s = "\"float\" expected"; break;
+			case 10: s = "\"for\" expected"; break;
+			case 11: s = "\"(\" expected"; break;
+			case 12: s = "\")\" expected"; break;
+			case 13: s = "\"{\" expected"; break;
+			case 14: s = "\"}\" expected"; break;
+			case 15: s = "\"if\" expected"; break;
+			case 16: s = "\"else\" expected"; break;
+			case 17: s = "??? expected"; break;
+			case 18: s = "invalid LexicalAnalyzer"; break;
+			case 19: s = "invalid TypeSpecifier"; break;
+			case 20: s = "invalid Condition"; break;
+			case 21: s = "invalid ForExpression"; break;
+			case 22: s = "invalid Expression"; break;
+			case 23: s = "invalid FloatExprVar"; break;
+			case 24: s = "invalid IntExprVar"; break;
 
 			default: s = "error " + n; break;
 		}

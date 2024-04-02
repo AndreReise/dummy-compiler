@@ -31,14 +31,21 @@ TOKENS
     Equal = equal.
 IGNORE '\r' + '\n'
 PRODUCTIONS
-    LexicalAnalyzer = IfElseStatement.
-    IfElseStatement = "if" "(" Condition ")" "{" Body "}" "else" "{" Body "}".
-    Condition = IntCondition | FloatCondition.
+    LexicalAnalyzer = ForStatement | IfElseStatement.
 
+    TypeSpecifier = "int" | "float".
+    ForStatement = "for" "(" Declaration Semicol Condition Semicol ForExpression ")" "{" Body "}".
+    IfElseStatement = "if" "(" Condition ")" "{" Body "}" "else" "{" Body "}".
+
+    Condition = IntCondition | FloatCondition | VarCondition.
+
+    Declaration = TypeSpecifier VarName Equal { IntNum | FloatNum }.
     IntCondition = IntNum {operation IntNum} comparison IntNum {operation IntNum}.
     FloatCondition = FloatNum {operation FloatNum} comparison FloatNum {operation FloatNum}.
+    VarCondition = VarName comparison {IntNum | FloatNum}.
 
     Body = {Expression | IfElseStatement}.
+    ForExpression = VarName operation (VarName | IntNum | FloatNum).
     Expression = (IntExpression | FloatExpression) Semicol.
 
     FloatExpression = "float" VarName Equal FloatExprVar {operation FloatExprVar}.
