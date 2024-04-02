@@ -1,4 +1,4 @@
-if (a + 1 >= 7.6) {
+if (a >= 7.6;) {
    int result_1 = b + c - 3;
    float result_2 = 2 * 3;
 } else {

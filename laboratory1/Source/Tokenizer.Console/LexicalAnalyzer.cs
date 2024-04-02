@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace Tokenizer.Console
@@ -32,9 +33,11 @@ namespace Tokenizer.Console
 
                 if (token != null)
                 {
-                    this.PushToken(token.Value);
+                    this.PushToken(token);
                 }
             }
+
+            this.PushToken(this.MakeToken(SyntaxTokenType.Eof));
 
             return this.syntaxTokens.ToArray();
         }
@@ -81,6 +84,7 @@ namespace Tokenizer.Console
                 case '<':
                     if (CompareNext('=')) return MakeToken(SyntaxTokenType.LessOrEqual);
                     return MakeToken(SyntaxTokenType.Less);
+                case ';': return this.MakeToken(SyntaxTokenType.Semicolon);
             }
 
             return null;
@@ -127,16 +131,36 @@ namespace Tokenizer.Console
                 return this.MakeNumber();
             }
         }
-        public SyntaxToken MakeToken(SyntaxTokenType tokenType)  => new SyntaxToken()
+        public SyntaxToken MakeToken(SyntaxTokenType tokenType, string value = null)  => new SyntaxToken()
         {
             Index = this.syntaxTokens.Count,
             Position = this.tokenStartPosition,
             TokenType = tokenType,
+            Value = value
         };
 
-        public SyntaxToken MakeIdentifier() => MakeToken(SyntaxTokenType.Identifier);
+        public string MakeStringFromBuffer()
+        {
+            return string.Create(this.buffer.Count, this.buffer, (chars, buf) => {
+                for (int i = 0; i < chars.Length; i++) chars[i] = buf[i];
+            });
+        }
 
-        public SyntaxToken MakeNumber() => MakeToken(SyntaxTokenType.Number);
+        public SyntaxToken MakeIdentifier()
+        {
+            var str = this.MakeStringFromBuffer();
+
+            return str switch
+            {
+                "for" => MakeToken(SyntaxTokenType.For, str),
+                "while" => MakeToken(SyntaxTokenType.While, str),
+                "if" => MakeToken(SyntaxTokenType.If, str),
+                "else" => MakeToken(SyntaxTokenType.Else, str),
+                _ => MakeToken(SyntaxTokenType.Identifier, str),
+            };
+        }
+
+        public SyntaxToken MakeNumber() => MakeToken(SyntaxTokenType.Number, this.MakeStringFromBuffer());
 
         public char ReadChar() => (char) this.inputStream.ReadByte();
 

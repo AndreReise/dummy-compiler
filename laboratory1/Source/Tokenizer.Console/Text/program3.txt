@@ -1,0 +1,7 @@
+while(x < 10){
+	int ax = x * 5;
+
+	int diff = c - ax;
+
+	x += diff;
+}
