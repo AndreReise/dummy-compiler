@@ -6,17 +6,13 @@ using System.Threading.Tasks;
 
 namespace Tokenizer.Console
 {
-    public enum SyntaxTokenType
+    public enum SyntaxTokenType : int
     {
         Identifier,
         Number,
         String,
-        If,
-        Else,
-        Id,
         PO, // par open
         PC, // par close,
-        Semicolon,
         CO, // curly open
         CC, // curly close,
         BO,
@@ -41,5 +37,11 @@ namespace Tokenizer.Console
         MoreOrEqual,
         Less,
         LessOrEqual,
+        If,
+        Else,
+        For,
+        While,
+        Eof,
+        Semicolon
     }
 }

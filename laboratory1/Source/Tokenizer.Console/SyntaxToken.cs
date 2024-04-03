@@ -1,6 +1,6 @@
 ﻿namespace Tokenizer.Console
 {
-    public struct SyntaxToken
+    public class SyntaxToken
     {
         public SyntaxTokenType TokenType;
 
@@ -8,9 +8,11 @@
 
         public int Position { get; set; }
 
+        public string Value { get; set; }
+
         public override string ToString()
         {
-            return $"Type: {this.TokenType}, Index: {Index}, Position: {Position}";
+            return $"Type: {this.TokenType}, Index: {Index}, Position: {Position}, Value: {Value}";
         }
     }
 }

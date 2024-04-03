@@ -8,16 +8,21 @@ namespace Tokenizer.Console
     {
         static void Main(string[] args)
         {
-            using var fs = File.Open("./Text/program2.txt", FileMode.Open, FileAccess.Read);
+            using var fs = File.Open("./Text/program3.txt", FileMode.Open, FileAccess.Read);
 
-            var analyzer = new LexicalAnalyzer(fs);
+            var lexer = new LexicalAnalyzer(fs);
 
-            var tokens = analyzer.Process();
+            var tokens = lexer.Process();
 
             foreach (var token in tokens)
             {
                 System.Console.WriteLine(token);
             }
+
+            var analyzer = new SyntaxAnalyzer(tokens);
+
+            var node = analyzer.ReadStatement();
+          
         }
     }
 }
